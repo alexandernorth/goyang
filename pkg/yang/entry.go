@@ -683,36 +683,30 @@ func ToEntry(n Node) (e *Entry) {
 			}
 			// apply refinement according to https://datatracker.ietf.org/doc/html/rfc7950#section-7.13.2
 			// as best as we can
-
-			//   o  A leaf or choice node may get a default value, or a new default
-			//      value if it already had one.
 			//
 			//   o  A leaf-list node may get a set of default values, or a new set of
 			//      default values if it already had defaults; i.e., the set of
 			//      refined default values replaces the defaults already given.
+			//
+			//   o  A leaf or choice node may get a default value, or a new default
+			//      value if it already had one.
 			if len(refine.Defaults) != 0 {
 				if refineTarget.Kind != LeafEntry {
 					return newError(refine, "refine default value only allowed on leaf or leaf-list")
 				}
+
 				if refineTarget.ListAttr != nil {
 					refineTarget.Default = []string{}
 					for _, def := range refine.Defaults {
 						refineTarget.Default = append(refineTarget.Default, def.Name)
 					}
 				} else {
-					// leaf
 					if len(refine.Defaults) > 1 {
 						return newError(refine, "only single default value allowed on leaf")
 					}
 					refineTarget.Default = []string{refine.Defaults[0].Name}
 				}
 			}
-			//len(refine.Default) != 0 {
-			//	for _, def := range refine.Default {
-			//		refineTarget.Default = append(refineTarget.Default, def.Name)
-			//	}
-			//	}
-
 			//
 			//   o  Any node may get a specialized "description" string.
 			if refine.Description != nil {

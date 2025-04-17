@@ -1,4 +1,4 @@
-submodule refine {
+submodule refine-tests {
   belongs-to base { prefix "sbase"; }
   grouping refine-sub-group {
     leaf refine-sub-group-leaf {
