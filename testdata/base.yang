@@ -18,6 +18,7 @@ module base {
   prefix "base";
 
   include sub;
+  include refine;
   import other {
     prefix bother;
   }
@@ -89,5 +90,22 @@ module base {
      base:base-ext "EXTENSION" {
        leaf base-ext-leaf { type string; }
      }
+  }
+
+  // netest refi
+  container base-container-3 {
+    uses base-group {
+      refine "base-group-leaf" {
+        description "new refined description";
+      }
+    }
+  }
+
+  container base-container-4 {
+    uses base:refine-sub-group {
+      refine refine-sub-group-leaf {
+        default "refined-default-string";
+      }
+    }
   }
 }

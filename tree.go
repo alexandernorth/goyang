@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"io"
 	"sort"
+	"strings"
 
 	"github.com/openconfig/goyang/pkg/indent"
 	"github.com/openconfig/goyang/pkg/yang"
@@ -68,6 +69,9 @@ func Write(w io.Writer, e *yang.Entry) {
 	name := e.Name
 	if e.Prefix != nil {
 		name = e.Prefix.Name + ":" + name
+	}
+	if e.Default != nil {
+		name = name + " default: " + strings.Join(e.Default, ",")
 	}
 	switch {
 	case e.Dir == nil && e.ListAttr != nil:

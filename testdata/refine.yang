@@ -1,0 +1,9 @@
+submodule refine {
+  belongs-to base { prefix "sbase"; }
+  grouping refine-sub-group {
+    leaf refine-sub-group-leaf {
+        type string;
+        default "initial-default";
+        }
+  }
+}
