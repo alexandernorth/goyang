@@ -646,7 +646,7 @@ type Refine struct {
 	Parent     Node         `yang:"Parent,nomerge"`
 	Extensions []*Statement `yang:"Ext"`
 
-	Default     *Value   `yang:"default"`
+	Defaults    []*Value `yang:"default"`
 	Description *Value   `yang:"description"`
 	IfFeature   []*Value `yang:"if-feature"`
 	Reference   *Value   `yang:"reference"`

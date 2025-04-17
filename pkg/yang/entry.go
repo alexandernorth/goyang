@@ -690,19 +690,21 @@ func ToEntry(n Node) (e *Entry) {
 			//   o  A leaf-list node may get a set of default values, or a new set of
 			//      default values if it already had defaults; i.e., the set of
 			//      refined default values replaces the defaults already given.
-			if refine.Default != nil {
+			if len(refine.Defaults) != 0 {
 				if refineTarget.Kind != LeafEntry {
 					return newError(refine, "refine default value only allowed on leaf or leaf-list")
 				}
 				if refineTarget.ListAttr != nil {
-					return newError(refine, "refine default not supported yet on leaf-list")
-					// leaf-list
-					//for _, def := range refine.Default {
-					//	refineTarget.Default = append(refineTarget.Default, def.Name)
-					//}
+					refineTarget.Default = []string{}
+					for _, def := range refine.Defaults {
+						refineTarget.Default = append(refineTarget.Default, def.Name)
+					}
 				} else {
 					// leaf
-					refineTarget.Default = []string{refine.Default.Name}
+					if len(refine.Defaults) > 1 {
+						return newError(refine, "only single default value allowed on leaf")
+					}
+					refineTarget.Default = []string{refine.Defaults[0].Name}
 				}
 			}
 			//len(refine.Default) != 0 {
