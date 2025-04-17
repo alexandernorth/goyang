@@ -732,7 +732,13 @@ func ToEntry(n Node) (e *Entry) {
 			}
 
 			//   o  A container node may get a "presence" statement.
-			// TODO(): presence statement
+			if refine.Presence != nil {
+				if refineTarget.Kind != DirectoryEntry {
+					return newError(refine, "presence statement only allowed on container")
+				}
+				// We overwirte the current presence value and do not append
+				refineTarget.Extra["presence"] = []interface{}{&Value{Name: refine.Presence.Name}}
+			}
 
 			//   o  A leaf-list or list node may get a different "min-elements" or
 			//      "max-elements" statement.

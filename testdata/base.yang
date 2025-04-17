@@ -19,6 +19,7 @@ module base {
 
   include sub;
   include refine-tests;
+  include presence-tests;
   import other {
     prefix bother;
   }
