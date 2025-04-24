@@ -691,21 +691,23 @@ func ToEntry(n Node) (e *Entry) {
 			//   o  A leaf or choice node may get a default value, or a new default
 			//      value if it already had one.
 			if len(refine.Defaults) != 0 {
-				if refineTarget.Kind != LeafEntry {
-					return newError(refine, "refine default value only allowed on leaf or leaf-list")
+				switch refineTarget.Node.(type) {
+				case *Leaf, *LeafList, *Choice:
+					if refineTarget.ListAttr != nil {
+						refineTarget.Default = []string{}
+						for _, def := range refine.Defaults {
+							refineTarget.Default = append(refineTarget.Default, def.Name)
+						}
+					} else {
+						if len(refine.Defaults) > 1 {
+							return newError(refine, "only single default value allowed on leaf")
+						}
+						refineTarget.Default = []string{refine.Defaults[0].Name}
+					}
+				default:
+					return newError(refine, "refine default value only allowed on leaf, choice-node or leaf-list")
 				}
 
-				if refineTarget.ListAttr != nil {
-					refineTarget.Default = []string{}
-					for _, def := range refine.Defaults {
-						refineTarget.Default = append(refineTarget.Default, def.Name)
-					}
-				} else {
-					if len(refine.Defaults) > 1 {
-						return newError(refine, "only single default value allowed on leaf")
-					}
-					refineTarget.Default = []string{refine.Defaults[0].Name}
-				}
 			}
 			//
 			//   o  Any node may get a specialized "description" string.
@@ -733,10 +735,10 @@ func ToEntry(n Node) (e *Entry) {
 
 			//   o  A container node may get a "presence" statement.
 			if refine.Presence != nil {
-				if refineTarget.Kind != DirectoryEntry {
+				if _, ok := refineTarget.Node.(*Container); !ok {
 					return newError(refine, "presence statement only allowed on container")
 				}
-				// We overwirte the current presence value and do not append
+				// We overwrite the current presence value and do not append
 				refineTarget.Extra["presence"] = []interface{}{&Value{Name: refine.Presence.Name}}
 			}
 
